@@ -2,6 +2,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"time"
 	"encoding/json"
 	"github.com/stianeikeland/go-rpio/v4"
 )
@@ -25,6 +26,16 @@ func toggle() {
 	on = !on
 }
 
+func unlock() {
+	if simulate {
+		fmt.Println("Unlocking")
+	} else {
+		pin.High()
+		time.Sleep(time.Second)
+		pin.Low()
+	}
+}
+
 func init() {
 	fmt.Println("Init the pin")
 	if err := rpio.Open(); err != nil {
@@ -45,8 +56,15 @@ func toggleHandler(responseWriter http.ResponseWriter, request *http.Request) {
 	json.NewEncoder(responseWriter).Encode(state)
 }
 
+func unlockHandler(responseWriter http.ResponseWriter, request *http.Request) {
+	unlock()
+	responseWriter.WriteHeader(http.StatusOK)
+}
+
 func main() {
 	http.HandleFunc("/toggle", toggleHandler)
+
+	http.HandleFunc("/unlock", unlockHandler)
 
 	http.ListenAndServe(":8080", nil)
 }
