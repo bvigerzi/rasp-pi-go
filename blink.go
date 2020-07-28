@@ -17,6 +17,19 @@ var (
 	on = false
 )
 
+func init() {
+	fmt.Println("Init the pin")
+	if err := rpio.Open(); err != nil {
+		fmt.Println(err)
+		fmt.Println("Failed to init GPIO pin, simulating instead")
+		simulate = true
+	} else {
+		fmt.Println("Finished pin init")
+		pin.Output()
+		pin.Low()
+	}
+}
+
 func toggle() {
 	if simulate {
 		fmt.Println("Toggled the pin")
@@ -36,19 +49,6 @@ func unlock() {
 	}
 }
 
-func init() {
-	fmt.Println("Init the pin")
-	if err := rpio.Open(); err != nil {
-		fmt.Println(err)
-		fmt.Println("Failed to init GPIO pin, simulating instead")
-		simulate = true
-	} else {
-		fmt.Println("Finished pin init")
-		pin.Output()
-		pin.Low()
-	}
-}
-
 func toggleHandler(responseWriter http.ResponseWriter, request *http.Request) {
 	toggle()
 	responseWriter.WriteHeader(http.StatusOK)
@@ -58,6 +58,8 @@ func toggleHandler(responseWriter http.ResponseWriter, request *http.Request) {
 
 func unlockHandler(responseWriter http.ResponseWriter, request *http.Request) {
 	unlock()
+	fmt.Println(request.Header)
+	fmt.Println(request.Cookies())
 	responseWriter.WriteHeader(http.StatusOK)
 }
 
