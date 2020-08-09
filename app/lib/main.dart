@@ -51,15 +51,22 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Center(
-            child: AnimatedOpacity(
-                opacity: _locked ? 1.0 : 0.0,
-                duration: Duration(milliseconds: 500),
-                child: IconButton(
-                    icon: _locked ? Icon(Icons.lock) : Icon(Icons.lock_open),
+            child: AnimatedCrossFade(
+                crossFadeState: _locked ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+                duration: Duration(milliseconds: 200),
+                firstChild: IconButton(
+                    icon: Icon(Icons.lock),
                     iconSize: 45,
                     tooltip: 'Unlock',
-                    onPressed: _locked ? _unlock : null
-                )
+                    onPressed: _unlock
+                ),
+                secondChild: IconButton(
+                    icon: Icon(Icons.lock_open),
+                    iconSize: 45,
+                    tooltip: 'Unlocked',
+                    onPressed: null,
+                    disabledColor: Colors.black
+                ),
             )
         )
     );
