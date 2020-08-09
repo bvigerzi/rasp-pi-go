@@ -29,20 +29,24 @@ class _HomeState extends State<Home> {
   final String hostUrl = 'http://192.168.1.6:8080';
 
   bool _locked = true;
+  bool _error = false;
 
   void _unlock() async {
     setState(() {
       _locked = false;
+      _error = false;
     });
     try {
       await http.get(hostUrl + '/unlock').timeout(Duration(seconds: 2));
       setState(() {
         _locked = true;
+        _error = false;
       });
     } catch (exception) {
       print(exception);
       setState(() {
         _locked = true;
+        _error = true;
       });
     }
   }
@@ -50,6 +54,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: _locked ? _error ? Colors.red : Colors.lightBlue : Colors.lightGreen, // TODO: animate this to clean it up
         body: Center(
             child: AnimatedCrossFade(
                 crossFadeState: _locked ? CrossFadeState.showFirst : CrossFadeState.showSecond,
